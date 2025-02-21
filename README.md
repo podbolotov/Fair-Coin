@@ -60,9 +60,9 @@ services:
     ports:
       - 8080:8080
     environment:
-      - URL="http://127.0.0.1:8080"
-      - CUSTOM_HEAD_LABEL="Лицевая сторона"
-      - CUSTOM_TAIL_LABEL="Обратная сторона"
+      - URL=http://127.0.0.1:8080
+      - CUSTOM_HEAD_LABEL=Лицевая сторона
+      - CUSTOM_TAIL_LABEL=Обратная сторона
       - SHRINK_HISTORY_TO=10
     volumes:
       - ./storage:/app/storage
