@@ -63,7 +63,7 @@ services:
     volumes:
       - ./storage:/app/storage
 ```
-docker pull 
+
 #### Сборка напрямую с GitHub
 ```yml
 services:
