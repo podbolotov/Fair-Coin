@@ -86,3 +86,6 @@ services:
 
 - Приложение предоставляется под [The MIT License (MIT)](./LICENSE)
 - Настоящее приложение использует [FastAPI](https://github.com/fastapi/fastapi)
+
+## Посвящение
+- Идейный вдохновитель - [developer-kaczmarek](https://github.com/developer-kaczmarek)
