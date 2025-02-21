@@ -50,7 +50,7 @@
 ```yml
 services:
   faircoin:
-    image: ghcr.io/podbolotov/faircoin:1.0.0
+    image: https://ghcr.io/podbolotov/faircoin:1.0.0
     ports:
       - 8080:8080
     environment:
