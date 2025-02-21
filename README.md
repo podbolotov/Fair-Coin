@@ -54,9 +54,9 @@
 #### Сборка напрямую с GitHub
 ```yml
 services:
-  FairCoin:
+  faircoin:
     build: https://github.com/podbolotov/Fair-Coin.git#main
-    image: FairCoin:1.0.0
+    image: faircoin:1.0.0
     ports:
       - 8080:8080
     environment:
