@@ -48,9 +48,20 @@
 
 #### Готовый контейнер
 ```yml
-<ожидается подготовка и публикация готового контейнера>
+services:
+  faircoin:
+    image: ghcr.io/podbolotov/faircoin:1.0.0
+    ports:
+      - 8080:8080
+    environment:
+      - URL=http://127.0.0.1:8080
+      - CUSTOM_HEAD_LABEL=Лицевая сторона
+      - CUSTOM_TAIL_LABEL=Обратная сторона
+      - SHRINK_HISTORY_TO=10
+    volumes:
+      - ./storage:/app/storage
 ```
-
+docker pull 
 #### Сборка напрямую с GitHub
 ```yml
 services:
