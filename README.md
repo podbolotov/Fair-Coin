@@ -39,6 +39,7 @@
 
 | Переменная           | Формат / Значение по умолчанию | Назначение                                         |
 |----------------------|--------------------------------|----------------------------------------------------|
+| `TZ`                 | `Asia/Almaty`                  | Таймзона для временных меток в истории бросков     |
 | `URL`                | `http://127.0.0.1:8080`        | Базовый URL, по которому доступно приложение       |
 | `CUSTOM_HEAD_LABEL`  | `Лицевая сторона`              | Пользовательское название лицевой стороны монетки  |
 | `CUSTOM_TAIL_LABEL`  | `Обратная сторона`             | Пользовательское название обратной стороны монетки |
@@ -50,10 +51,11 @@
 ```yml
 services:
   faircoin:
-    image: https://ghcr.io/podbolotov/faircoin:1.0.0
+    image: ghcr.io/podbolotov/faircoin:1.0.0
     ports:
       - 8080:8080
     environment:
+      - TZ=Asia/Almaty
       - URL=http://127.0.0.1:8080
       - CUSTOM_HEAD_LABEL=Лицевая сторона
       - CUSTOM_TAIL_LABEL=Обратная сторона
@@ -71,6 +73,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      - TZ=Asia/Almaty
       - URL=http://127.0.0.1:8080
       - CUSTOM_HEAD_LABEL=Лицевая сторона
       - CUSTOM_TAIL_LABEL=Обратная сторона
