@@ -1,10 +1,10 @@
 # Честная монетка
 > "Мы говорим случаю - не сегодня"
 
-<center><img src="readme_images/main_page.PNG" alt="drawing" width="500"/><br/>
+<center><img src="readme_images/main_page.PNG" alt="drawing" width="500"/>
 <i>Страница броска монетки</i>
 <br/><br/>
-<img src="readme_images/flip_page.PNG" alt="drawing" width="500"/><br/>
+<img src="readme_images/flip_page.PNG" alt="drawing" width="500"/>
 <i>Страница результата</i>
 
 </center>
