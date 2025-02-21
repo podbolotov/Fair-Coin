@@ -3,9 +3,10 @@
 
 <center><img src="readme_images/main_page.PNG" alt="drawing" width="500"/><br/>
 <i>Страница броска монетки</i>
-
+<br/><br/>
 <img src="readme_images/flip_page.PNG" alt="drawing" width="500"/><br/>
 <i>Страница результата</i>
+
 </center>
 
 ## Что здесь происходит?
