@@ -11,7 +11,7 @@ def write_to_history(db: Database, result: str, chances: str):
 def get_history(db: Database) -> str:
 
     history_start = """
-            <table border="2">
+            <table class="table">
                 <thead>
                   <tr>
                     <th>Дата и время события</th>

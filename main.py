@@ -1,8 +1,8 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from content.flip_page import get_flip_page_content
+from content.result_page import get_result_page_content
 from content.main_page import get_main_page_content
 from content.quotes import get_random_before_flip_quote, get_random_after_flip_quote
 from core.chances import get_chances, write_chances
@@ -20,6 +20,7 @@ app = FastAPI(
 )
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 @app.get("/", response_class=HTMLResponse)
 async def main_page():
     chances = get_chances(db=database)
@@ -33,8 +34,8 @@ async def main_page():
     )
 
 
-@app.get("/flip", response_class=HTMLResponse)
-async def flip_page():
+@app.get("/flip", response_class=RedirectResponse)
+async def flip():
     chances = get_chances(db=database)
 
     current_head_chance, current_tail_chance = chances.HEAD, chances.TAIL
@@ -54,13 +55,29 @@ async def flip_page():
         tail_chance=flip_result.TAIL
     )
 
+    return RedirectResponse(
+        url=f'{ServiceVariables.URL}/result?side={flip_result.RESULT}'
+            f'&generation_pool={str(flip_result.GENERATION_POOL)}',
+        status_code=303
+    )
+
+
+@app.get("/result", response_class=HTMLResponse)
+async def result_page(
+        side="Вероятно, вы перешли сюда из истории, или изменили URL",
+        generation_pool="нет данных"
+):
+    chances = get_chances(db=database)
+
+    new_head_chance, new_tail_chance = chances.HEAD, chances.TAIL
+
     history = get_history(db=database)
-    return get_flip_page_content(
+    return get_result_page_content(
         quote=get_random_after_flip_quote(),
-        side=flip_result.RESULT,
-        generation_pool=flip_result.GENERATION_POOL,
-        head_chance=flip_result.HEAD,
-        tail_chance=flip_result.TAIL,
+        side=side,
+        generation_pool=generation_pool,
+        head_chance=new_head_chance,
+        tail_chance=new_tail_chance,
         history=history
     )
 
@@ -79,6 +96,7 @@ async def reset_chances():
                 f'{ServiceVariables.CUSTOM_TAIL_LABEL}: 50%'
     )
     return RedirectResponse(ServiceVariables.URL)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)
