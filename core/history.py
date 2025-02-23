@@ -31,9 +31,9 @@ def get_history(db: Database) -> str:
     for row in db_result:
         history = history + f"""
         <tr>
-            <td>{row[1]}</td>
-            <td>{row[2]}</td>
-            <td><center>{row[3]}</center></td>
+            <td align="center">{row[1]}</td>
+            <td align="center">{row[2]}</td>
+            <td align="center">{row[3]}</td>
         </tr>"""
 
     if len(db_result) < int(ServiceVariables.SHRINK_HISTORY_TO):
@@ -42,9 +42,9 @@ def get_history(db: Database) -> str:
         while we_have_to_add_placeholders > 0:
             history = history + f"""
             <tr>
-                <td>...</td>
-                <td>...</td>
-                <td><center>...</center></td>
+                <td align="center">...</td>
+                <td align="center">...</td>
+                <td align="center">...</td>
             </tr>"""
             we_have_to_add_placeholders = we_have_to_add_placeholders - 1
 

@@ -37,7 +37,6 @@ def get_main_page_content(quote, head_chance, tail_chance, history):
     <br/>
     {history}
     <br/>
-    <br/>
     <form action="{ServiceVariables.URL}/flip">
       <input class="button" type="submit" value="Бросить монетку" />
     </form>

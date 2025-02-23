@@ -30,7 +30,7 @@ def get_core_page_template(inner):
               font-size: 16px;
             }}
             .table {{
-              width: 90%;
+              width: 100%;
               border: 2px solid;
               padding: 6pt;
             }}
@@ -38,6 +38,7 @@ def get_core_page_template(inner):
               height: 1.5em;
               padding-left: 6pt;
               padding-right: 6pt;
+              align: center;
             }}
             </style>
             <body>

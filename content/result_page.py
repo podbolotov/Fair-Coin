@@ -33,7 +33,6 @@ def get_result_page_content(quote, side, generation_pool, head_chance, tail_chan
         <br/>
         {history}
         <br/>
-        <br/>
         <form action="{ServiceVariables.URL}">
           <input class="button" type="submit" value="Вернуться назад" />
         </form>
