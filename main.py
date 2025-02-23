@@ -16,7 +16,9 @@ database = Database()
 app = FastAPI(
     title="Fair Coin",
     description="Брось монетку и получи повышенные шансы выиграть, если проиграл",
-    version="1.0.0"
+    version="1.1.0",
+    docs_url=None,
+    redoc_url=None
 )
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -91,8 +93,8 @@ async def reset_chances():
     )
     write_to_history(
         db=database,
-        result="<b><сброс шансов></b>",
-        chances=f'Установлены шансы:<br> {ServiceVariables.CUSTOM_HEAD_LABEL}: 50%, '
+        result="<b>Шансы сброшены</b>",
+        chances=f'{ServiceVariables.CUSTOM_HEAD_LABEL}: 50%, '
                 f'{ServiceVariables.CUSTOM_TAIL_LABEL}: 50%'
     )
     return RedirectResponse(ServiceVariables.URL)
