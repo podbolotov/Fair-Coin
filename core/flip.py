@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, shuffle
 from core.vars import ServiceVariables
 from models.coins import CoinSidesChances
 from models.results import FlipResultWithChances
@@ -18,6 +18,7 @@ def flip_coin(head_chance: int, tail_chance: int) -> FlipResultWithChances:
     for x in coin_tail_chance:
       coins_bundle.append(ServiceVariables.CUSTOM_TAIL_LABEL)
 
+    shuffle(coins_bundle)
     random_side = choice(coins_bundle)
 
     if random_side == ServiceVariables.CUSTOM_HEAD_LABEL:
