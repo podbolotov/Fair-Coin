@@ -94,8 +94,7 @@ async def reset_chances():
     write_to_history(
         db=database,
         result="<b>Шансы сброшены</b>",
-        chances=f'{ServiceVariables.CUSTOM_HEAD_LABEL}: 50%, '
-                f'{ServiceVariables.CUSTOM_TAIL_LABEL}: 50%'
+        chances='<b>Шансы приведены к 50%</b>'
     )
     return RedirectResponse(ServiceVariables.URL)
 

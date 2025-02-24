@@ -28,7 +28,7 @@ def get_result_page_content(quote, side, generation_pool, head_chance, tail_chan
         <br/>
         <details>
             <summary>Пул генерации</summary>
-            <p>{generation_pool}</p>
+            <p style="text-align: justify; border: 2px solid; padding: 6pt;">{generation_pool}</p>
         </details>
         <br/>
         {history}
