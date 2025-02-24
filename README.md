@@ -1,10 +1,10 @@
 # Честная монетка
 > "Мы говорим случаю - не сегодня"
 
-![Страница броска монетки](readme_images/main_page.PNG)
+![Страница броска монетки](readme_images/main_page.png)
 _Страница броска монетки_
 
-![Страница результата](readme_images/result_page.PNG)
+![Страница результата](readme_images/result_page.png)
 _Страница результата_
 
 
