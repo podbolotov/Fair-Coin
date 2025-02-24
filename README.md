@@ -87,4 +87,4 @@ services:
 - Настоящее приложение использует [FastAPI](https://github.com/fastapi/fastapi)
 
 ## Посвящение
-- Идейный вдохновитель - [developer-kaczmarek](https://github.com/developer-kaczmarek)
+- Идейный вдохновитель: [developer-kaczmarek](https://github.com/developer-kaczmarek)
