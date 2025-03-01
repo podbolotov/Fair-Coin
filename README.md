@@ -61,6 +61,7 @@ services:
       - SHRINK_HISTORY_TO=5
     volumes:
       - ./storage:/app/storage
+    restart: unless-stopped
 ```
 
 #### Сборка напрямую с GitHub
@@ -79,6 +80,7 @@ services:
       - SHRINK_HISTORY_TO=5
     volumes:
       - ./storage:/app/storage
+    restart: unless-stopped
 ```
 
 ### Развёртывание за обратным прокси
