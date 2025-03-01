@@ -21,10 +21,12 @@ from database.database import Database
 database = Database()
 broadcast_ws = BroadcastSender()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await broadcast_ws.generator.asend(None)
     yield
+
 
 app = FastAPI(
     title="Fair Coin",
@@ -42,8 +44,10 @@ async def main_page():
     chances = get_chances(db=database)
     history = get_history(db=database)
     head_chance, tail_chance = chances.HEAD, chances.TAIL
+    last_result = database.get_history()[0][2]
     return get_main_page_content(
         quote=get_random_before_flip_quote(),
+        last_result=last_result,
         head_chance=head_chance,
         tail_chance=tail_chance,
         history=history
@@ -56,22 +60,60 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             if data == 'flip':
+
+                chances = get_chances(db=database)
+
+                current_head_chance, current_tail_chance = chances.HEAD, chances.TAIL
+
+                flip_result = flip_coin(head_chance=current_head_chance, tail_chance=current_tail_chance)
+
+                write_to_history(
+                    db=database,
+                    result=flip_result.RESULT,
+                    chances=f'{ServiceVariables.CUSTOM_HEAD_LABEL}: {current_head_chance}%, '
+                            f'{ServiceVariables.CUSTOM_TAIL_LABEL}: {current_tail_chance}%'
+                )
+
+                write_chances(
+                    db=database,
+                    head_chance=flip_result.HEAD,
+                    tail_chance=flip_result.TAIL
+                )
+
+                history = get_history(db=database)
+
                 message = "coin_flip_response"
                 payload = {
-                    "new_head_chance": "int",
-                    "new_tail_chance": "int",
-                    "history": "history_HTML"
+                    "result": flip_result.RESULT,
+                    "new_head_chance": flip_result.HEAD,
+                    "new_tail_chance": flip_result.TAIL,
+                    "history": history
                 }
+
             elif data == 'reset':
+                write_chances(
+                    db=database,
+                    head_chance=50,
+                    tail_chance=50
+                )
+                write_to_history(
+                    db=database,
+                    result="<b>Шансы сброшены</b>",
+                    chances='<b>Шансы приведены к 50%</b>'
+                )
+                chances = get_chances(db=database)
+                history = get_history(db=database)
+                head_chance, tail_chance = chances.HEAD, chances.TAIL
                 message = "chances_reset_response"
                 payload = {
-                    "new_head_chance": "int",
-                    "new_tail_chance": "int",
-                    "history": "history_HTML"
+                    "result": "<b>Шансы сброшены</b>",
+                    "new_head_chance": head_chance,
+                    "new_tail_chance": tail_chance,
+                    "history": history
                 }
             else:
                 message = "unknown_action"
-                payload = {}
+                payload = None
             await broadcast_ws.push(
                 json.dumps({
                     "message": message,
@@ -144,21 +186,6 @@ async def websocket_endpoint(websocket: WebSocket):
 #         tail_chance=new_tail_chance,
 #         history=history
 #     )
-
-
-# @app.get("/reset")
-# async def reset_chances():
-#     write_chances(
-#         db=database,
-#         head_chance=50,
-#         tail_chance=50
-#     )
-#     write_to_history(
-#         db=database,
-#         result="<b>Шансы сброшены</b>",
-#         chances='<b>Шансы приведены к 50%</b>'
-#     )
-#     return RedirectResponse(ServiceVariables.URL)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

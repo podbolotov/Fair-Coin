@@ -2,7 +2,7 @@ from core.vars import ServiceVariables
 from content.core_page_template import get_core_page_template
 
 
-def get_main_page_content(quote, head_chance, tail_chance, history):
+def get_main_page_content(quote, last_result, head_chance, tail_chance, history):
     main_page_content = f"""
     <!DOCTYPE html>
     <html>
@@ -44,20 +44,12 @@ def get_main_page_content(quote, head_chance, tail_chance, history):
         }}
         </style>
         <body>
-            <!-- <h1>WebSocket Chat</h1>
-            <form action="" onsubmit="sendMessage(event)">
-                <input type="text" id="messageText" autocomplete="off"/>
-                <button>Send</button>
-            </form>
-            <ul id='messages'>
-            </ul> -->
-
             <center>
             <h1>Честная монетка</h1>
             <h3>{quote}</h3>
             <hr>
             <p>Если тебе выпала не та сторона, которую ты хотел - шансы изменятся в твою пользу.</p>
-            <h1 id="waiting-text" class="status-label">Ожидание броска</b></h1>
+            <section id="flip_status_label"><h1 id='result-text' class='status-label' style='background: black; color: white;'>Последний результат: {last_result}</b></h1></section>
             <p><b>Текущие шансы</b></p>
             <table class="table">
             <thead>
@@ -68,17 +60,17 @@ def get_main_page_content(quote, head_chance, tail_chance, history):
             </thead>
             <tbody>
               <tr>
-                <td><center>{head_chance}%</center></td>
-                <td><center>{tail_chance}%</center></td>
+                <td id="head_chance_label"><center>{head_chance}%</center></td>
+                <td id="tail_chance_label"><center>{tail_chance}%</center></td>
               </tr>
             </tbody>
             </table>
             <br/>
-            <details>
+            <details id="chances_reset_container">
                 <summary>Сбросить шансы можно тут</summary>
                 <br/>
                 <p>Нажатие на кнопку "Сбросить шансы" вернёт шансы к значениям 50 на 50.<br/>Не злоупотребляйте!</p>
-                <form action="{ServiceVariables.URL}/reset">
+                <form action="" onsubmit="closeResetDetails(); sendAction(event, 'reset')">
                   <input class="button" type="submit" value="Сбросить шансы" />
                 </form>
                 <br/>
@@ -88,7 +80,7 @@ def get_main_page_content(quote, head_chance, tail_chance, history):
             {history}
             </section>
             <br/>
-            <form action="{ServiceVariables.URL}/flip">
+            <form action="" onsubmit="sendAction(event, 'flip')">
               <input class="button" type="submit" value="Бросить монетку" />
             </form>
             <br/>
@@ -96,19 +88,59 @@ def get_main_page_content(quote, head_chance, tail_chance, history):
 
             <script>
                 var ws = new WebSocket("ws://{ServiceVariables.URL}/ws");
+                
                 ws.onmessage = function(event) {{
-                    var messages = document.getElementById('messages')
-                    var message = document.createElement('li')
-                    var content = document.createTextNode(event.data)
-                    message.appendChild(content)
-                    messages.appendChild(message)
+                    event_data = JSON.parse(event.data)
+                    console.log(event_data.message)
+                    
+                    if (event_data.message === 'coin_flip_response') {{
+                      var flip_status_label = document.getElementById('flip_status_label');
+                      var result_text = event_data.payload.result;
+                      flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
+                      + 'Последний результат: ' + result_text + '</b></h1>'
+                    
+                      var head_chance_label = document.getElementById('head_chance_label')
+                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
+                      
+                      var head_chance_label = document.getElementById('tail_chance_label')
+                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
+                      
+                      var history_section = document.getElementById('history_section')
+                      history_section.innerHTML = event_data.payload.history
+                    }};
+                    
+                    if (event_data.message === 'chances_reset_response') {{
+                      var flip_status_label = document.getElementById('flip_status_label');
+                      var result_text = event_data.payload.result;
+                      flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
+                      + 'Последний результат: ' + result_text + '</b></h1>'
+                    
+                      var head_chance_label = document.getElementById('head_chance_label')
+                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
+                      
+                      var head_chance_label = document.getElementById('tail_chance_label')
+                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
+                      
+                      var history_section = document.getElementById('history_section')
+                      history_section.innerHTML = event_data.payload.history
+                      
+                      var deet = document.getElementById('chances_reset_container');
+                      deet.open = false;
+                    }};
+                    
                 }};
-                function sendMessage(event) {{
-                    var input = document.getElementById("messageText")
-                    ws.send(input.value)
-                    input.value = ''
+                
+                function sendAction(event, action = 'flip') {{
+                    var action_value = action
+                    ws.send(action_value)
                     event.preventDefault()
                 }};
+                
+                function closeResetDetails() {{
+                    var details = document.getElementById('chances_reset_container');
+                    details.open = false;
+                }};
+                
             </script>
         </body>
     </html>
