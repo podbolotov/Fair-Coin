@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from starlette.websockets import WebSocketDisconnect
+from starlette.websockets import WebSocketDisconnect, WebSocketClose
 
 from content.main_page import get_main_page_content
 from content.quotes import get_random_before_flip_quote, get_random_after_flip_quote
@@ -89,6 +89,12 @@ async def websocket_endpoint(websocket: WebSocket):
                     "new_tail_chance": flip_result.TAIL,
                     "history": history
                 }
+                await broadcast_ws.push(
+                    json.dumps({
+                        "message": message,
+                        "payload": payload
+                    })
+                )
 
             elif data == 'reset':
                 write_chances(
@@ -111,15 +117,44 @@ async def websocket_endpoint(websocket: WebSocket):
                     "new_tail_chance": tail_chance,
                     "history": history
                 }
+                await broadcast_ws.push(
+                    json.dumps({
+                        "message": message,
+                        "payload": payload
+                    })
+                )
+
+            elif data == 'repeat_last_for_me_only':
+                chances = get_chances(db=database)
+                history = get_history(db=database)
+                last_result = database.get_history()[0][2]
+                head_chance, tail_chance = chances.HEAD, chances.TAIL
+                message = "repeat_last_for_you_only_response"
+                payload = {
+                    "result": last_result,
+                    "new_head_chance": head_chance,
+                    "new_tail_chance": tail_chance,
+                    "history": history
+                }
+                await broadcast_ws.send_to_one_only(
+                    websocket = websocket,
+                    message=json.dumps({
+                        "message": message,
+                        "payload": payload
+                    })
+                )
+
             else:
                 message = "unknown_action"
                 payload = None
-            await broadcast_ws.push(
-                json.dumps({
-                    "message": message,
-                    "payload": payload
-                })
-            )
+                await broadcast_ws.push(
+                    json.dumps({
+                        "message": message,
+                        "payload": payload
+                    })
+                )
+
+
     except WebSocketDisconnect:
         broadcast_ws.remove(websocket)
 

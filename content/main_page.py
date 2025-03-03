@@ -89,46 +89,78 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
             <script>
                 var ws = new WebSocket("ws://{ServiceVariables.URL}/ws");
                 
-                ws.onmessage = function(event) {{
-                    event_data = JSON.parse(event.data)
-                    console.log(event_data.message)
-                    
-                    if (event_data.message === 'coin_flip_response') {{
-                      var flip_status_label = document.getElementById('flip_status_label');
-                      var result_text = event_data.payload.result;
-                      flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
-                      + 'Последний результат: ' + result_text + '</b></h1>'
-                    
-                      var head_chance_label = document.getElementById('head_chance_label')
-                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
-                      
-                      var head_chance_label = document.getElementById('tail_chance_label')
-                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
-                      
-                      var history_section = document.getElementById('history_section')
-                      history_section.innerHTML = event_data.payload.history
+                function addWebSocketActions() {{
+                
+                    ws.onmessage = function(event) {{
+                        event_data = JSON.parse(event.data)
+                        console.log(event_data.message)
+                        
+                        if (event_data.message === 'coin_flip_response') {{
+                          var flip_status_label = document.getElementById('flip_status_label');
+                          var result_text = event_data.payload.result;
+                          flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
+                          + 'Последний результат: ' + result_text + '</b></h1>'
+                        
+                          var head_chance_label = document.getElementById('head_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
+                          
+                          var head_chance_label = document.getElementById('tail_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
+                          
+                          var history_section = document.getElementById('history_section')
+                          history_section.innerHTML = event_data.payload.history
+                        }};
+                        
+                        if (event_data.message === 'chances_reset_response') {{
+                          var flip_status_label = document.getElementById('flip_status_label');
+                          var result_text = event_data.payload.result;
+                          flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
+                          + 'Последний результат: ' + result_text + '</b></h1>'
+                        
+                          var head_chance_label = document.getElementById('head_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
+                          
+                          var head_chance_label = document.getElementById('tail_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
+                          
+                          var history_section = document.getElementById('history_section')
+                          history_section.innerHTML = event_data.payload.history
+                          
+                          var deet = document.getElementById('chances_reset_container');
+                          deet.open = false;
+                        }};
+                        
+                        if (event_data.message === 'repeat_last_for_you_only_response') {{
+                          var flip_status_label = document.getElementById('flip_status_label');
+                          var result_text = event_data.payload.result;
+                          flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
+                          + 'Последний результат: ' + result_text + '</b></h1>'
+                        
+                          var head_chance_label = document.getElementById('head_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
+                          
+                          var head_chance_label = document.getElementById('tail_chance_label')
+                          head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
+                          
+                          var history_section = document.getElementById('history_section')
+                          history_section.innerHTML = event_data.payload.history
+                          
+                          var deet = document.getElementById('chances_reset_container');
+                          deet.open = false;
+                        }};
+                        
                     }};
                     
-                    if (event_data.message === 'chances_reset_response') {{
-                      var flip_status_label = document.getElementById('flip_status_label');
-                      var result_text = event_data.payload.result;
-                      flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: black; color: white;'>"
-                      + 'Последний результат: ' + result_text + '</b></h1>'
-                    
-                      var head_chance_label = document.getElementById('head_chance_label')
-                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_head_chance + "%</center>"
-                      
-                      var head_chance_label = document.getElementById('tail_chance_label')
-                      head_chance_label.innerHTML = "<center>" + event_data.payload.new_tail_chance + "%</center>"
-                      
-                      var history_section = document.getElementById('history_section')
-                      history_section.innerHTML = event_data.payload.history
-                      
-                      var deet = document.getElementById('chances_reset_container');
-                      deet.open = false;
+                    ws.onopen = function(event) {{
+                        flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: green; color: white;'>"
+                        + 'Соединение восстановлено!' + '</b></h1>'
+                        
+                        setTimeout(ws.send('repeat_last_for_me_only'), 1000);
                     }};
-                    
+                
                 }};
+                
+                addWebSocketActions();
                 
                 function sendAction(event, action = 'flip') {{
                     var action_value = action
@@ -140,6 +172,26 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                     var details = document.getElementById('chances_reset_container');
                     details.open = false;
                 }};
+            
+                var timeoutId = null;
+
+                function checkWebSocketState() {{
+                  if (ws.readyState === WebSocket.OPEN) {{
+                    console.info("WS is OPEN");
+                  }} else if (ws.readyState === WebSocket.CONNECTING) {{
+                    console.info("WS is CONNECTING");
+                  }} else {{
+                    flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: red; color: white;'>"
+                    + 'Отсутствует соединение с сервером.</br>Пытаемся переподключиться...' + '</b></h1>'
+                    ws = new WebSocket("ws://{ServiceVariables.URL}/ws");
+                    addWebSocketActions();
+                  }}
+                  
+                  timeoutId = setTimeout(checkWebSocketState, 1000);
+                  
+                }}
+                
+                checkWebSocketState();
                 
             </script>
         </body>

@@ -14,6 +14,10 @@ class BroadcastSender:
     async def push(self, msg: str):
         await self.generator.asend(msg)
 
+    @staticmethod
+    async def send_to_one_only(websocket: WebSocket, message: str):
+        await websocket.send_text(message)
+
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.connections.append(websocket)
