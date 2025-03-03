@@ -23,7 +23,10 @@ class BroadcastSender:
         self.connections.append(websocket)
 
     def remove(self, websocket: WebSocket):
-        self.connections.remove(websocket)
+        try:
+            self.connections.remove(websocket)
+        except ValueError as e:
+            print(f"Starlette error handle: {e}")
 
     async def _notify(self, message: str):
         living_connections = []

@@ -1,5 +1,4 @@
 from core.vars import ServiceVariables
-from content.core_page_template import get_core_page_template
 
 
 def get_main_page_content(quote, last_result, head_chance, tail_chance, history):
@@ -93,7 +92,7 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                 
                     ws.onmessage = function(event) {{
                         event_data = JSON.parse(event.data)
-                        console.log(event_data.message)
+                        // console.log(event_data.message)
                         
                         if (event_data.message === 'coin_flip_response') {{
                           var flip_status_label = document.getElementById('flip_status_label');
@@ -153,9 +152,8 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                     
                     ws.onopen = function(event) {{
                         flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: green; color: white;'>"
-                        + 'Соединение восстановлено!' + '</b></h1>'
-                        
-                        setTimeout(ws.send('repeat_last_for_me_only'), 1000);
+                        + 'Соединение установлено' + '</b></h1>'
+                        setTimeout(function () {{ ws.send('repeat_last_for_me_only') }}, 1000)
                     }};
                 
                 }};
@@ -177,9 +175,9 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
 
                 function checkWebSocketState() {{
                   if (ws.readyState === WebSocket.OPEN) {{
-                    console.info("WS is OPEN");
+                    console.info("Websocket is open.");
                   }} else if (ws.readyState === WebSocket.CONNECTING) {{
-                    console.info("WS is CONNECTING");
+                    console.info("Websocket is connecting...");
                   }} else {{
                     flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: red; color: white;'>"
                     + 'Отсутствует соединение с сервером.</br>Пытаемся переподключиться...' + '</b></h1>'
