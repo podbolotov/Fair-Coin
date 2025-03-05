@@ -13,6 +13,9 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
         html {{
           font-family: Arial, sans-serif;
         }}
+        h1 {{
+          font-size: 1.8em;
+        }}
         body {{
           width: 800px;
           margin: auto;
@@ -29,6 +32,11 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
           text-decoration: none;
           display: inline-block;
           font-size: 16px;
+          cursor: pointer;
+        }}
+        .button_disabled {{
+          opacity: 0.6;
+          cursor: not-allowed;
         }}
         .table {{
           width: 100%;
@@ -70,7 +78,7 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                 <br/>
                 <p>Нажатие на кнопку "Сбросить шансы" вернёт шансы к значениям 50 на 50.<br/>Не злоупотребляйте!</p>
                 <form action="" onsubmit="closeResetDetails(); sendAction(event, 'reset')">
-                  <input class="button" type="submit" value="Сбросить шансы" />
+                  <input id="reset_button" class="button" type="submit" value="Сбросить шансы" />
                 </form>
                 <br/>
             </details>
@@ -80,13 +88,13 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
             </section>
             <br/>
             <form action="" onsubmit="sendAction(event, 'flip')">
-              <input class="button" type="submit" value="Бросить монетку" />
+              <input id="flip_button" class="button" type="submit" value="Бросить монетку" />
             </form>
             <br/>
             </center>
 
             <script>
-                var ws = new WebSocket("ws://{ServiceVariables.URL}/ws");
+                var ws = new WebSocket("/ws");
                 
                 function addWebSocketActions() {{
                 
@@ -108,6 +116,7 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                           
                           var history_section = document.getElementById('history_section')
                           history_section.innerHTML = event_data.payload.history
+                          disable_buttons();
                         }};
                         
                         if (event_data.message === 'chances_reset_response') {{
@@ -127,6 +136,7 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                           
                           var deet = document.getElementById('chances_reset_container');
                           deet.open = false;
+                          disable_buttons();
                         }};
                         
                         if (event_data.message === 'repeat_last_for_you_only_response') {{
@@ -146,6 +156,8 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                           
                           var deet = document.getElementById('chances_reset_container');
                           deet.open = false;
+                          
+                          disable_buttons();
                         }};
                         
                     }};
@@ -154,15 +166,30 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                         flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: green; color: white;'>"
                         + 'Соединение установлено' + '</b></h1>'
                         setTimeout(function () {{ ws.send('repeat_last_for_me_only') }}, 1000)
+                        disable_buttons();
                     }};
                 
                 }};
                 
                 addWebSocketActions();
                 
+                function disable_buttons() {{
+                    document.getElementById("flip_button").disabled = true;
+                    document.getElementById("flip_button").classList.add("button_disabled");
+                    document.getElementById("reset_button").disabled = true;
+                    document.getElementById("reset_button").classList.add("button_disabled");
+                    setTimeout(function () {{ 
+                      document.getElementById("flip_button").removeAttribute("disabled");
+                      document.getElementById("flip_button").classList.remove("button_disabled");
+                      document.getElementById("reset_button").removeAttribute("disabled");
+                      document.getElementById("reset_button").classList.remove("button_disabled");
+                    }}, 2000)
+                }}
+                
                 function sendAction(event, action = 'flip') {{
                     var action_value = action
                     ws.send(action_value)
+                    disable_buttons();
                     event.preventDefault()
                 }};
                 
@@ -181,7 +208,7 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
                   }} else {{
                     flip_status_label.innerHTML = "<h1 id='result-text' class='status-label' style='background: red; color: white;'>"
                     + 'Отсутствует соединение с сервером.</br>Пытаемся переподключиться...' + '</b></h1>'
-                    ws = new WebSocket("ws://{ServiceVariables.URL}/ws");
+                    ws = new WebSocket("/ws");
                     addWebSocketActions();
                   }}
                   
@@ -196,4 +223,3 @@ def get_main_page_content(quote, last_result, head_chance, tail_chance, history)
     </html>
     """
     return main_page_content
-    # return get_core_page_template(inner=main_page_content)

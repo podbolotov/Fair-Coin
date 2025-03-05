@@ -153,7 +153,8 @@ async def websocket_endpoint(websocket: WebSocket):
                     })
                 )
 
-    except WebSocketDisconnect:
+    except WebSocketDisconnect as disconnect:
+        print(f'Socket disconnected.\nCode: {disconnect.code}\nReason:{disconnect.reason}')
         broadcast_ws.remove(websocket)
 
 if __name__ == "__main__":
