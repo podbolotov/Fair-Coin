@@ -16,7 +16,7 @@ database = Database()
 app = FastAPI(
     title="Fair Coin",
     description="Брось монетку и получи повышенные шансы выиграть, если проиграл",
-    version="2.0.0",
+    version="1.2.0",
     docs_url=None,
     redoc_url=None
 )
